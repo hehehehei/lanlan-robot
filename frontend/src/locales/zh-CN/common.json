@@ -1,0 +1,15 @@
+{
+  "toolbar": {
+    "title": "CAD 工具栏",
+    "open": "打开",
+    "save": "保存",
+    "export": "导出"
+  },
+  "layers": {
+    "title": "图层",
+    "placeholder": "图层列表即将到来"
+  },
+  "canvas": {
+    "status": "画布已准备好"
+  }
+}
