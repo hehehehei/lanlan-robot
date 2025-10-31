@@ -1,0 +1,12 @@
+{
+  "name": "cad-monorepo",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "backend",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/rust:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "forwardPorts": [8080, 5173],
+  "postCreateCommand": "corepack enable && pnpm install --dir frontend"
+}

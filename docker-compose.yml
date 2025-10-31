@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cad}
+      MYSQL_USER: ${MYSQL_USER:-cad_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cad_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD:-password}@db:3306/${MYSQL_DATABASE:-cad}
+      APP_PORT: 8080
+      FILE_STORAGE_DIR: /data/storage
+      RUST_LOG: ${RUST_LOG:-server=info,sqlx=warn,tower_http=warn}
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend-storage:/data/storage
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://backend:8080
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  backend-storage:
