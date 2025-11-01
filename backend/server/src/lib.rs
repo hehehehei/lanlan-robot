@@ -30,6 +30,10 @@ pub async fn create_app(config: config::Config) -> anyhow::Result<Router> {
 
     let app = Router::new()
         .route("/api/projects/:project_id/files", post(routes::upload_file))
+        .route(
+            "/api/projects/:project_id/files/:file_id/parse",
+            post(routes::parse_file),
+        )
         .layer(RequestBodyLimitLayer::new(config.max_file_size))
         .layer(TraceLayer::new_for_http())
         .with_state(state);

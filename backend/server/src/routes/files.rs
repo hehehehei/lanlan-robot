@@ -79,7 +79,7 @@ pub async fn upload_file(
     let file_record = sqlx::query_as::<_, File>(
         "INSERT INTO files (project_id, name, size, storage_path, checksum, encoding, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
-         RETURNING id, project_id, name, size, storage_path, checksum, encoding, created_at, updated_at",
+         RETURNING id, project_id, name, size, storage_path, checksum, encoding, parse_status, parse_error, created_at, updated_at",
     )
     .bind(project_id)
     .bind(&filename)
@@ -109,7 +109,7 @@ pub async fn upload_file(
             .await?;
 
             sqlx::query_as::<_, File>(
-                "SELECT id, project_id, name, size, storage_path, checksum, encoding, created_at, updated_at 
+                "SELECT id, project_id, name, size, storage_path, checksum, encoding, parse_status, parse_error, created_at, updated_at 
                  FROM files 
                  WHERE project_id = ? AND name = ? 
                  ORDER BY id DESC LIMIT 1",
