@@ -5,6 +5,7 @@ import {
   DEFAULT_HIT_RADIUS,
   useSelectionStore,
 } from '../../state/selectionStore';
+import { useToolsStore } from '../../state/toolsStore';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
@@ -115,6 +116,11 @@ export const setupCanvasInteractions = (
   );
 
   const pointerDown = (event: PIXI.FederatedPointerEvent) => {
+    const activeTool = useToolsStore.getState().activeTool;
+    if (activeTool !== 'select' && activeTool !== 'delete') {
+      return;
+    }
+
     pointerDownGlobal = { x: event.global.x, y: event.global.y };
     dragExceededThreshold = false;
 
@@ -135,6 +141,11 @@ export const setupCanvasInteractions = (
   };
 
   const pointerMove = (event: PIXI.FederatedPointerEvent) => {
+    const activeTool = useToolsStore.getState().activeTool;
+    if (activeTool !== 'select' && activeTool !== 'delete') {
+      return;
+    }
+
     if (pointerMode === 'pan' && panStart && stageStart) {
       const dx = event.global.x - panStart.x;
       const dy = event.global.y - panStart.y;
@@ -186,6 +197,11 @@ export const setupCanvasInteractions = (
   };
 
   const pointerUp = (event: PIXI.FederatedPointerEvent) => {
+    const activeTool = useToolsStore.getState().activeTool;
+    if (activeTool !== 'select' && activeTool !== 'delete') {
+      return;
+    }
+
     const additive = event.shiftKey;
     const toggle = event.ctrlKey || event.metaKey;
 
