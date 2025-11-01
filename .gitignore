@@ -5,6 +5,16 @@ Thumbs.db
 
 # Rust
 /target/
+/backend/target/
+/backend/server/target/
+Cargo.lock
+
+# Backend storage
+/backend/storage/
+/storage/
+
+# Environment
+.env
 
 # Node.js
 /node_modules/
