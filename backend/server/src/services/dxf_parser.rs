@@ -230,12 +230,7 @@ impl DxfParser {
             i += 1;
         }
 
-        let bbox = BoundingBox::new(
-            x1.min(x2),
-            y1.min(y2),
-            x1.max(x2),
-            y1.max(y2),
-        );
+        let bbox = BoundingBox::new(x1.min(x2), y1.min(y2), x1.max(x2), y1.max(y2));
 
         let entity = CreateEntityInput {
             entity_type: "LINE".to_string(),
@@ -284,7 +279,9 @@ impl DxfParser {
         while i < lines.len() {
             let line = lines[i].trim();
 
-            if line == "SEQEND" || (line == "0" && i + 1 < lines.len() && lines[i + 1].trim() != "VERTEX") {
+            if line == "SEQEND"
+                || (line == "0" && i + 1 < lines.len() && lines[i + 1].trim() != "VERTEX")
+            {
                 break;
             }
 
@@ -391,12 +388,7 @@ impl DxfParser {
             i += 1;
         }
 
-        let bbox = BoundingBox::new(
-            cx - radius,
-            cy - radius,
-            cx + radius,
-            cy + radius,
-        );
+        let bbox = BoundingBox::new(cx - radius, cy - radius, cx + radius, cy + radius);
 
         let entity = CreateEntityInput {
             entity_type: "ARC".to_string(),
@@ -449,12 +441,7 @@ impl DxfParser {
             i += 1;
         }
 
-        let bbox = BoundingBox::new(
-            cx - radius,
-            cy - radius,
-            cx + radius,
-            cy + radius,
-        );
+        let bbox = BoundingBox::new(cx - radius, cy - radius, cx + radius, cy + radius);
 
         let entity = CreateEntityInput {
             entity_type: "CIRCLE".to_string(),
@@ -507,12 +494,7 @@ impl DxfParser {
             i += 1;
         }
 
-        let bbox = BoundingBox::new(
-            x,
-            y,
-            x + text.len() as f64 * height * 0.6,
-            y + height,
-        );
+        let bbox = BoundingBox::new(x, y, x + text.len() as f64 * height * 0.6, y + height);
 
         let entity = CreateEntityInput {
             entity_type: "TEXT".to_string(),
@@ -534,7 +516,7 @@ impl DxfParser {
 
     fn add_entity_to_layer(&mut self, layer_name: &str, entity: CreateEntityInput) {
         self.ensure_default_layer();
-        
+
         if !self.layers.contains_key(layer_name) {
             self.layers.insert(
                 layer_name.to_string(),

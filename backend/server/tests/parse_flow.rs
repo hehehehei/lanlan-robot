@@ -140,7 +140,7 @@ async fn setup_test_server() -> (String, TempDir, sqlx::MySqlPool) {
 async fn test_parse_flow_success() {
     let (server_url, _temp_dir, pool) = setup_test_server().await;
 
-    let dxf_content = include_bytes!("../../../fixtures/sample_utf8.dxf");
+    let dxf_content = include_bytes!("../../fixtures/sample_utf8.dxf");
 
     let form = multipart::Form::new().part(
         "file",
@@ -205,12 +205,20 @@ async fn test_parse_flow_success() {
 
     assert!(layer_count.0 > 0, "Expected at least one layer");
 
-    let layers: Vec<(u64, String, Option<f64>, Option<f64>, Option<f64>, Option<f64>)> =
-        sqlx::query_as("SELECT id, name, min_x, min_y, max_x, max_y FROM layers WHERE file_id = ? ORDER BY name")
-            .bind(file_id)
-            .fetch_all(&pool)
-            .await
-            .expect("Failed to fetch layers");
+    let layers: Vec<(
+        u64,
+        String,
+        Option<f64>,
+        Option<f64>,
+        Option<f64>,
+        Option<f64>,
+    )> = sqlx::query_as(
+        "SELECT id, name, min_x, min_y, max_x, max_y FROM layers WHERE file_id = ? ORDER BY name",
+    )
+    .bind(file_id)
+    .fetch_all(&pool)
+    .await
+    .expect("Failed to fetch layers");
 
     for layer in &layers {
         assert!(
@@ -241,10 +249,7 @@ async fn test_parse_flow_success() {
         .expect("Failed to fetch entities");
 
         for entity in entities {
-            assert!(
-                !entity.0.is_empty(),
-                "Entity type should not be empty"
-            );
+            assert!(!entity.0.is_empty(), "Entity type should not be empty");
             assert!(
                 entity.1 <= entity.3 && entity.2 <= entity.4,
                 "Entity bounding box should be valid"
@@ -306,7 +311,7 @@ async fn test_parse_invalid_file() {
             .expect("Failed to fetch file status");
 
     assert!(file_result.is_some());
-    let (status, error) = file_result.unwrap();
+    let (status, _error) = file_result.unwrap();
 
     assert!(
         status == "parsed" || status == "failed",
@@ -321,7 +326,7 @@ async fn test_parse_invalid_file() {
 async fn test_reparse_file() {
     let (server_url, _temp_dir, pool) = setup_test_server().await;
 
-    let dxf_content = include_bytes!("../../../fixtures/sample_utf8.dxf");
+    let dxf_content = include_bytes!("../../fixtures/sample_utf8.dxf");
 
     let form = multipart::Form::new().part(
         "file",

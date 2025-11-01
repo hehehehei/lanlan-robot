@@ -14,10 +14,12 @@ impl PersistService {
     ) -> Result<()> {
         let mut tx = pool.begin().await?;
 
-        sqlx::query("DELETE FROM entities WHERE layer_id IN (SELECT id FROM layers WHERE file_id = ?)")
-            .bind(file_id)
-            .execute(&mut *tx)
-            .await?;
+        sqlx::query(
+            "DELETE FROM entities WHERE layer_id IN (SELECT id FROM layers WHERE file_id = ?)",
+        )
+        .bind(file_id)
+        .execute(&mut *tx)
+        .await?;
 
         sqlx::query("DELETE FROM layers WHERE file_id = ?")
             .bind(file_id)
@@ -73,7 +75,7 @@ impl PersistService {
 
     pub async fn mark_parsing(pool: &MySqlPool, file_id: u64) -> Result<bool> {
         let result = sqlx::query(
-            "UPDATE files SET parse_status = 'parsing' WHERE id = ? AND parse_status != 'parsing'"
+            "UPDATE files SET parse_status = 'parsing' WHERE id = ? AND parse_status != 'parsing'",
         )
         .bind(file_id)
         .execute(pool)
@@ -114,7 +116,7 @@ impl PersistService {
 
         let result = sqlx::query(
             "INSERT INTO entities (layer_id, entity_type, data, min_x, min_y, max_x, max_y) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)"
+             VALUES (?, ?, ?, ?, ?, ?, ?)",
         )
         .bind(layer_id)
         .bind(&input.entity_type)
@@ -134,16 +136,14 @@ impl PersistService {
         layer_id: u64,
         bbox: &BoundingBox,
     ) -> Result<()> {
-        sqlx::query(
-            "UPDATE layers SET min_x = ?, min_y = ?, max_x = ?, max_y = ? WHERE id = ?"
-        )
-        .bind(bbox.min_x)
-        .bind(bbox.min_y)
-        .bind(bbox.max_x)
-        .bind(bbox.max_y)
-        .bind(layer_id)
-        .execute(&mut *conn)
-        .await?;
+        sqlx::query("UPDATE layers SET min_x = ?, min_y = ?, max_x = ?, max_y = ? WHERE id = ?")
+            .bind(bbox.min_x)
+            .bind(bbox.min_y)
+            .bind(bbox.max_x)
+            .bind(bbox.max_y)
+            .bind(layer_id)
+            .execute(&mut *conn)
+            .await?;
 
         Ok(())
     }
@@ -152,7 +152,7 @@ impl PersistService {
         let layers = sqlx::query_as::<_, Layer>(
             "SELECT id, file_id, name, is_locked, is_visible, color, line_type, line_weight, 
                     min_x, min_y, max_x, max_y, created_at, updated_at 
-             FROM layers WHERE file_id = ? ORDER BY name"
+             FROM layers WHERE file_id = ? ORDER BY name",
         )
         .bind(file_id)
         .fetch_all(pool)
@@ -165,7 +165,7 @@ impl PersistService {
         let entities = sqlx::query_as::<_, Entity>(
             "SELECT id, layer_id, entity_type, data, min_x, min_y, max_x, max_y, 
                     created_at, updated_at 
-             FROM entities WHERE layer_id = ? ORDER BY id"
+             FROM entities WHERE layer_id = ? ORDER BY id",
         )
         .bind(layer_id)
         .fetch_all(pool)
