@@ -20,5 +20,24 @@
     "home": "首页",
     "project": "项目",
     "fileViewer": "文件查看器"
+  },
+  "loading": {
+    "projects": "正在加载项目...",
+    "files": "正在加载文件...",
+    "layers": "正在加载图层...",
+    "entities": "正在加载实体...",
+    "uploading": "正在上传文件...",
+    "parsing": "正在解析文件..."
+  },
+  "error": {
+    "loadProjects": "加载项目失败",
+    "loadFiles": "加载文件失败",
+    "loadLayers": "加载图层失败",
+    "loadEntities": "加载实体失败",
+    "uploadFile": "上传文件失败",
+    "parseFile": "解析文件失败",
+    "requestFailed": "请求失败",
+    "networkError": "网络错误",
+    "retry": "重试"
   }
 }
