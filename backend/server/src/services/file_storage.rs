@@ -14,6 +14,10 @@ impl FileStorage {
         Self { root_path }
     }
 
+    pub fn root_path(&self) -> &PathBuf {
+        &self.root_path
+    }
+
     pub async fn store_file(
         &self,
         data: &[u8],

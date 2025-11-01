@@ -11,6 +11,8 @@ pub struct File {
     pub storage_path: Option<String>,
     pub checksum: Option<String>,
     pub encoding: Option<String>,
+    pub parse_status: Option<String>,
+    pub parse_error: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
