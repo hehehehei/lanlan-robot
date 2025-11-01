@@ -1,0 +1,17 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+
+# Rust
+/target/
+
+# Node.js
+/node_modules/
+
+# Python
+__pycache__/
+*.pyc
+
+# SQLx
+.sqlx/
