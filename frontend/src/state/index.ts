@@ -5,6 +5,8 @@ export {
   useEntitiesStore,
 } from './store';
 
+export { useSelectionStore } from './selectionStore';
+
 export type {
   LoadingState,
   ProjectsState,
@@ -12,3 +14,9 @@ export type {
   LayersState,
   EntitiesState,
 } from './store';
+
+export type {
+  SelectionState,
+  SelectionItem,
+  Point,
+} from './selectionStore';
