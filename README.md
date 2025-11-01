@@ -6,6 +6,8 @@ This is a monorepo project using pnpm workspaces.
 
 ```
 .
+├── backend/           # Backend services
+│   └── server/        # DXF parser service (Rust)
 ├── frontend/          # React frontend application
 └── migrations/        # Database migrations
 ```
@@ -14,6 +16,7 @@ This is a monorepo project using pnpm workspaces.
 
 - Node.js 18+
 - pnpm 8+
+- Rust 1.70+ (for backend services)
 
 ## Getting Started
 
@@ -59,6 +62,34 @@ pnpm --filter frontend typecheck   # Type check
 pnpm --filter frontend preview     # Preview production build
 ```
 
+## Backend
+
+See [backend/server/README.md](backend/server/README.md) for detailed backend documentation.
+
+### DXF Parser Service (Rust)
+
+- Parse DXF CAD files using the `dxf` crate
+- Support for line, polyline, arc, circle, text, and insert entities
+- Chinese text encoding support (GB18030)
+- Bounding box computation
+- Layer extraction
+- Independent, async-ready service interface
+
+### Backend Commands
+
+```bash
+cd backend/server
+
+# Build the parser
+cargo build --release
+
+# Run tests
+cargo test
+
+# Parse a DXF file
+cargo run -- path/to/file.dxf
+```
+
 ## Frontend
 
 See [frontend/README.md](frontend/README.md) for detailed frontend documentation.
@@ -78,6 +109,14 @@ See [frontend/README.md](frontend/README.md) for detailed frontend documentation
 
 ```
 project/
+├── backend/
+│   └── server/            # DXF parser service (Rust)
+│       ├── src/
+│       │   ├── models/    # Entity models
+│       │   └── services/  # Parser service
+│       ├── tests/         # Integration tests
+│       ├── fixtures/      # Test fixtures (sample.dxf)
+│       └── Cargo.toml     # Rust dependencies
 ├── frontend/              # Frontend React application
 │   ├── src/
 │   │   ├── components/    # React components
