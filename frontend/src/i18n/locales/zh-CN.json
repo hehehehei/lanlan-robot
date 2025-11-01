@@ -8,7 +8,10 @@
   },
   "canvas": {
     "placeholder": "画布区域",
-    "loading": "加载中..."
+    "loading": "加载中...",
+    "help": "滚轮缩放，以鼠标位置为中心放大或缩小；按住右键或中键拖动画布，框选可快速选择实体。",
+    "deleteHint": "按 Delete 删除选中的实体。",
+    "selectionCount": "已选中 {{count}} 个实体"
   },
   "menu": {
     "project": "项目",

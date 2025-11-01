@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as PIXI from 'pixi.js';
+import { setupCanvasInteractions } from './canvas/Interactions';
+import { useSelectionStore } from '../state/selectionStore';
 import './CanvasContainer.css';
 
 export const CanvasContainer = () => {
@@ -8,8 +10,17 @@ export const CanvasContainer = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<PIXI.Application | null>(null);
 
+  const selectedCount = useSelectionStore((state) => state.selectedIds.length);
+
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) {
+      return undefined;
+    }
+
+    let isUnmounted = false;
+    let cleanupInteractions: (() => void) | undefined;
+    let activeApp: PIXI.Application | null = null;
+    let resizeHandler: (() => void) | undefined;
 
     const initPixi = async () => {
       const app = new PIXI.Application();
@@ -18,10 +29,28 @@ export const CanvasContainer = () => {
         resizeTo: canvasRef.current!,
       });
 
+      if (isUnmounted) {
+        app.destroy(true);
+        return;
+      }
+
       canvasRef.current!.appendChild(app.canvas);
       appRef.current = app;
+      activeApp = app;
 
-      const text = new PIXI.Text({
+      const viewport = new PIXI.Container();
+      viewport.name = 'viewport';
+
+      const overlayLayer = new PIXI.Container();
+      overlayLayer.name = 'interaction-overlay';
+      overlayLayer.eventMode = 'none';
+      overlayLayer.zIndex = 10_000;
+
+      app.stage.addChild(viewport);
+      app.stage.addChild(overlayLayer);
+      app.stage.sortableChildren = true;
+
+      const placeholder = new PIXI.Text({
         text: t('canvas.placeholder'),
         style: {
           fontFamily: 'Arial, sans-serif',
@@ -30,18 +59,44 @@ export const CanvasContainer = () => {
         },
       });
 
-      text.x = app.screen.width / 2;
-      text.y = app.screen.height / 2;
-      text.anchor.set(0.5);
+      placeholder.anchor.set(0.5);
+      placeholder.position.set(app.screen.width / 2, app.screen.height / 2);
+      viewport.addChild(placeholder);
 
-      app.stage.addChild(text);
+      resizeHandler = () => {
+        placeholder.position.set(app.screen.width / 2, app.screen.height / 2);
+      };
+
+      app.renderer.on('resize', resizeHandler);
+
+      cleanupInteractions = setupCanvasInteractions(app, {
+        overlayLayer,
+      });
     };
 
     initPixi();
 
     return () => {
+      isUnmounted = true;
+
+      if (cleanupInteractions) {
+        cleanupInteractions();
+        cleanupInteractions = undefined;
+      }
+
+      if (activeApp && resizeHandler) {
+        activeApp.renderer.off('resize', resizeHandler);
+        resizeHandler = undefined;
+      }
+
       if (appRef.current) {
+        const canvas = appRef.current.canvas;
+        if (canvas.parentNode) {
+          canvas.parentNode.removeChild(canvas);
+        }
         appRef.current.destroy(true);
+        appRef.current = null;
+        activeApp = null;
       }
     };
   }, [t]);
@@ -49,6 +104,11 @@ export const CanvasContainer = () => {
   return (
     <div className="canvas-container">
       <div ref={canvasRef} className="canvas-wrapper" />
+      <div className="canvas-overlay">
+        <span>{t('canvas.help')}</span>
+        <span>{t('canvas.deleteHint')}</span>
+        <span>{t('canvas.selectionCount', { count: selectedCount })}</span>
+      </div>
     </div>
   );
 };
