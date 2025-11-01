@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "项目查看器"
+  },
+  "sidebar": {
+    "title": "图层切换",
+    "placeholder": "图层控制面板"
+  },
+  "canvas": {
+    "placeholder": "画布区域",
+    "loading": "加载中..."
+  },
+  "menu": {
+    "project": "项目",
+    "file": "文件",
+    "view": "视图",
+    "help": "帮助"
+  },
+  "pages": {
+    "home": "首页",
+    "project": "项目",
+    "fileViewer": "文件查看器"
+  }
+}
