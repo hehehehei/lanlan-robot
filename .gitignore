@@ -5,6 +5,8 @@ Thumbs.db
 
 # Rust
 /target/
+/backend/server/target/
+/backend/server/Cargo.lock
 
 # Node.js
 /node_modules/
