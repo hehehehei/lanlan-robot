@@ -2,7 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as PIXI from 'pixi.js';
 import { setupCanvasInteractions } from './canvas/Interactions';
+import { setupToolHandlers } from './canvas/ToolHandlers';
 import { useSelectionStore } from '../state/selectionStore';
+import { EditorToolbar } from './toolbar/EditorToolbar';
+import { TextModal } from './toolbar/TextModal';
 import './CanvasContainer.css';
 
 export const CanvasContainer = () => {
@@ -19,6 +22,7 @@ export const CanvasContainer = () => {
 
     let isUnmounted = false;
     let cleanupInteractions: (() => void) | undefined;
+    let cleanupTools: (() => void) | undefined;
     let activeApp: PIXI.Application | null = null;
     let resizeHandler: (() => void) | undefined;
 
@@ -72,6 +76,8 @@ export const CanvasContainer = () => {
       cleanupInteractions = setupCanvasInteractions(app, {
         overlayLayer,
       });
+
+      cleanupTools = setupToolHandlers(app, { overlayLayer });
     };
 
     initPixi();
@@ -82,6 +88,10 @@ export const CanvasContainer = () => {
       if (cleanupInteractions) {
         cleanupInteractions();
         cleanupInteractions = undefined;
+      }
+      if (cleanupTools) {
+        cleanupTools();
+        cleanupTools = undefined;
       }
 
       if (activeApp && resizeHandler) {
@@ -104,6 +114,8 @@ export const CanvasContainer = () => {
   return (
     <div className="canvas-container">
       <div ref={canvasRef} className="canvas-wrapper" />
+      <EditorToolbar />
+      <TextModal />
       <div className="canvas-overlay">
         <span>{t('canvas.help')}</span>
         <span>{t('canvas.deleteHint')}</span>
