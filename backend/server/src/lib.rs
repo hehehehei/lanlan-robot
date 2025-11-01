@@ -4,7 +4,10 @@ pub mod models;
 pub mod routes;
 pub mod services;
 
-use axum::{routing::post, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use routes::AppState;
 use services::FileStorage;
 use sqlx::mysql::MySqlPoolOptions;
@@ -29,6 +32,7 @@ pub async fn create_app(config: config::Config) -> anyhow::Result<Router> {
     };
 
     let app = Router::new()
+        .route("/health", get(routes::health_check))
         .route("/api/projects/:project_id/files", post(routes::upload_file))
         .route(
             "/api/projects/:project_id/files/:file_id/parse",

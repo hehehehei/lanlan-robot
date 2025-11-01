@@ -1,0 +1,3 @@
+ALTER TABLE files
+DROP COLUMN size,
+DROP COLUMN encoding;
